@@ -1,12 +1,10 @@
 {
   "basics": {
-    "name": "Albert Einstein",
-    "label": "Scientist",
+    "name": "Grayson Martin",
     "image": "",
-    "email": "albert@einstein.de",
-    "phone": "(912) 123-4567",
-    "url": "https://alshedivat.github.io/al-folio/",
-    "summary": "A German-born theoretical physicist, widely ranked among the greatest and most influential scientists of all time",
+    "email": "graysonmartin04@gmail.com",
+    "url": "https://GraysonMMartin.github.io/",
+    "summary": "ML engineer interested in perception, decision-making, robotics & healthcare",
     "location": {
       "address": "2712 Broadway St",
       "postalCode": "CA 94115",
@@ -24,13 +22,34 @@
   },
   "work": [
     {
-      "name": "Institute for Advanced Study, Princeton University",
-      "position": "Professor of Theoretical Physics",
-      "url": "https://example.com",
-      "startDate": "1933-01-01",
-      "endDate": "1955-01-01",
-      "summary": "Teaching at Palmer Physical Laboratory (now 302 Frist Campus Center). While not a professor at Princeton, I associated with the physics professors and continued to give lectures on campus.",
-      "highlights": ["Relativity"]
+      "name": "The Kempner Institute at Harvard University",
+      "position": "ML Research Engineering Intern",
+      "url": "https://kempnerinstitute.harvard.edu/kempner-institute-undergraduate-summer-internship-program-in-ml-research-engineering/",
+      "startDate": "2025-06-18",
+      "endDate": "2025-08-22",
+      "summary": "R&D in support of a NeuroAI project focused on created a modular, functional model of the mouse brain with PyTorch",
+      "highlights": ["Generated several new Gymnasium environments, running training scripts to compare models in different environments and keeping track of performance with Weights & Biases integration",
+                     "Added the vision module of the brain, considering tradeoffs between complexity and generalizability"]
+    },
+    {
+      "name": "Medentum Innovations, Inc.",
+      "position": "Co-Founder",
+      "url": "https://medentum.com/",
+      "startDate": "2020-05-01",
+      "summary": "Co-Founder of a startup focused on using ML to improve health outcomes",
+      "highlights": ["Co-inventor of a patented device, gaining experience computer-aided drafting, coding, and prototyping",
+                     "Served as a liason to a PI for an NIH-backed data sceince project, interviewed potential employees, and actively review and edit grant proposals",
+                     "Support staff data scientists in COPD flare-up prediction, classification of ENT disorders, and multimodal generalist biomedical AI through literature review, exploratory data analysis, and TensorFlow model implementations"]
+    },
+    {
+      "name": "Los Alamos National Laboratory",
+      "position": "Robotics and Automation Rapid Prototyping Intern",
+      "url": "https://www.lanl.gov/engage/collaboration/internships/summer-schools/robotics-automation-summer-school",
+      "startDate": "2024-05-20",
+      "endDate": "2024-08-09",
+      "summary": "R&D in support of an automated robotic system for the assembly and dissasembly of the DPP-3 shipping container for radioactive material",
+      "highlights": ["Led the computer vision aspect of the project, fine-tuing pre-trained deep neural networks to recognize bolts and report their location in the camera frame",
+                     "Presentation and publication at Waste Management Symposium 2025 - awarded Superior Paper rating"]
     }
   ],
   "volunteer": [
@@ -47,15 +66,13 @@
   ],
   "education": [
     {
-      "institution": "University of Zurich, Zurich, Switzerland",
-      "location": "Zurich, Switzerland",
-      "url": "https://www.uzh.ch/",
-      "area": "Software Development",
-      "studyType": "PhD",
-      "startDate": "1905-01-01",
-      "endDate": "1905-01-01",
-      "score": "10",
-      "courses": ["Theory of Relativity"]
+      "institution": "Harvard University",
+      "location": "Cambridge, MA",
+      "url": "https://www.harvard.edu/",
+      "studyType": "Bachelors in Computer Science",
+      "startDate": "2021",
+      "endDate": "2025",
+      "courses": ["Traditional computer science coursework, data science, optimization, reinforcement learning, geometric machine learning, signals and communications, modern and classical control theory, computer vision, and high-performance computing"]
     }
   ],
   "awards": [
@@ -65,50 +82,6 @@
       "awarder": "Royal Swedish Academy of Sciences",
       "url": "https://www.nobelprize.org/prizes/physics/1921/einstein/biographical/",
       "summary": "The Nobel Prizes are five separate prizes that, according to Alfred Nobel's will of 1895, are awarded to 'those who, during the preceding year, have conferred the greatest benefit to humankind.'"
-    }
-  ],
-  "certificates": [
-    {
-      "name": "Machine Learning",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-location-dot"
-    },
-    {
-      "name": "Quantum Computing",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-tag"
-    },
-    {
-      "name": "Quantum Information",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-envelope"
-    },
-    {
-      "name": "Quantum Cryptography",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-hashtag"
-    },
-    {
-      "name": "Quantum Communication",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-calendar"
-    },
-    {
-      "name": "Quantum Teleportation",
-      "date": "2018-01-01",
-      "issuer": "Stanford University",
-      "url": "https://example.com",
-      "icon": "fa-solid fa-clipboard-check"
     }
   ],
   "publications": [
