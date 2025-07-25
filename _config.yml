@@ -194,6 +194,9 @@ exclude:
   - _pages/teaching.md
   - _pages/repositories.md
   - _pages/blog.md
+  - _pages/bibliography.md
+  - _pages/dropdown.md
+  - _pages/profile.md
 
 keep_files:
   - CNAME
@@ -637,6 +640,7 @@ jsonresume:
   - work
   - education
   - publications
+  - patents
   - projects
   - volunteer
   - awards

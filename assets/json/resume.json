@@ -82,6 +82,14 @@
       "summary": "Introduces an autonomous robotic system for the assembly and disassembly of DOE shipping containers. Design and implementation details are included."
     }
   ],
+  "patents": [
+    {
+      "name": "Diagnostic device for remote consultations and telemedicine",
+      "releaseDate": "2024-12-31",
+      "url": "https://patents.google.com/patent/US12183457B2/",
+      "summary": "A diagnostic device & platform for telemedicine utilizing low-cost sensors & AI"
+    }
+  ],
   "skills": [
     {
       "name": "Programming Languages",
