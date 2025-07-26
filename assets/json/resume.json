@@ -93,7 +93,7 @@
   "skills": [
     {
       "name": "Programming Languages",
-      "icon": "fa-solid fa-hashtag",
+      "icon": "fa-solid fa-code",
       "keywords": [
         "Python",
         "C++",
@@ -103,7 +103,7 @@
     },
     {
       "name": "Deep Learning Frameworks",
-      "icon": "fa-solid fa-hashtag",
+      "icon": "fa-solid fa-brain",
       "keywords": [
         "PyTorch",
         "TensorFlow"
@@ -111,7 +111,7 @@
     },
     {
       "name": "Machine Learning Techniques",
-      "icon": "fa-solid fa-hashtag",
+      "icon": "fa-solid fa-chart-line",
       "keywords": [
         "Unsupervised & Supervised Learning",
         "Computer Vision",
@@ -122,7 +122,7 @@
     },
     {
       "name": "Software Engineering",
-      "icon":"fa-solid fa-hashtag",
+      "icon":"fa-solid fa-screwdriver-wrench",
       "keywords": [
         "CI/CD",
         "Version Control",
@@ -131,7 +131,7 @@
     },
     {
       "name": "High-Performance Scientific Computing",
-      "icon": "fa-solid fa-hashtag",
+      "icon": "fa-solid fa-bolt",
       "keywords": [
         "MPI",
         "OpenMP",
@@ -141,7 +141,7 @@
     },
     {
       "name": "Technical Writing",
-      "icon": "fa-solid fa-hashtag",
+      "icon": "fa-solid fa-pen-nib",
       "keywords": [
         "LaTeX",
         "Microsoft Office"
