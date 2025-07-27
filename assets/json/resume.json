@@ -73,6 +73,34 @@
       "highlights": "Compared paths generated using GPOPS-II optimal control software with two models of quadrotor dynamics to understand how the setup of the path-generation problem impacts solution quality and computational difficulty"
     }
   ],
+  "leadership": [
+    {
+      "name": "The Harvard Crimson",
+      "location": "Cambridge, MA",
+      "position": "Director of Data Journalism",
+      "url": "https://www.thecrimson.com/",
+      "startDate": "2024-01-01",
+      "endDate": "2024-12-31",
+      "summary": "Elected position in which I led a small team of data scientists helping all sectors of The Crimson generate content that requires data acquisition and analysis",
+      "highlights": [
+        "Co-authored a data-intensive article about college admissions which was a finalist for the 2024 Society of Professional Journalists Mark of Excellence Awards in the New England region"
+      ]
+    },
+    {
+      "name": "Southwest Virginia Community College",
+      "location": "Cedar Bluff, VA",
+      "position": "Upward Bound Teaching Assistant",
+      "url": "https://www.ed.gov/grants-and-programs/grants-higher-education/federal-trio-programs/upward-bound-program",
+      "startDate": "2022-06-13",
+      "endDate": "2022-07-18",
+      "summary": "Assistant for a summer program focused on giving FGLI students tools for collegiate success",
+      "highlights": [
+        "Aided Upward Bound staff in teaching topics in robotics, world geography, and student success",
+        "Gave a presentation encouraging underserved Appalachian students to pursue higher education and attend prestigious institutions, along with college application advice",
+        "Supervised approximately 50 students on educational trips to Pigeon Forge, Atlanta, and New York City"
+      ]
+    }
+  ],
   "publications": [
     {
       "name": "A Mobile, Autonomous Bolting and Unbolting System for DOE Shipping Containers",
