@@ -11,7 +11,7 @@ ninja.data = [{
     },
   },{id: "nav-projects",
           title: "projects",
-          description: "A growing collection of your cool projects.",
+          description: "",
           section: "Navigation",
           handler: () => {
             window.location.href = "/projects/";
@@ -447,6 +447,21 @@ ninja.data = [{
           description: "another project with an image 🎉",
           section: "Projects",handler: () => {
               window.location.href = "/projects/9_project/";
+            },},{id: "projects-rl-for-high-performance-jumping",
+          title: 'RL for High-Performance Jumping',
+          description: "Used a curriculum learning framework to teach simulation quadrupeds to jump. Worked on and written with Aryan Naveen and Pranay Varada.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/cs1840_project/";
+            },},{id: "projects-semantic-segmentation-of-aerial-photographs",
+          title: 'Semantic Segmentation of Aerial Photographs',
+          description: "Per-pixel land use classification of sattelite imagery of Mumbai",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/cs2831_project/";
+            },},{id: "projects-feeder-schools-the-harvard-crimson",
+          title: 'Feeder Schools, The Harvard Crimson',
+          description: "Written with Elyse Goncalves and Matan Josephy",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/feeder_schools/";
             },},{
         id: 'social-email',
         title: 'email',
