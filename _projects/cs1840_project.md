@@ -25,12 +25,12 @@ The remainder of the paper is structured as follows: Sections 2 and 3 detail
 ---
 
 ## 2 Preliminaries
-Proximal Policy Optimization (PPO) is a policy‑gradient method that improves upon previous methods in the literature through its relative ease of implementation—requiring just first‑order optimization—and greater robustness relative to optimization techniques such as Trust Region Policy Optimization (TRPO) [7]. While the objective function maximized by TRPO is the expectation of the product of the advantage and a probability ratio measuring the change between the new and old policy at an update, PPO’s objective function **clips** the probability ratio in this surrogate objective in order to prevent the policy from making unstable updates while simultaneously continuing to allow for exploration. Clipping also avoids having to constrain the KL divergence, making the process computationally simpler and enabling policy updates over multiple epochs. PPO’s simplicity and stability make it a commonplace strategy for finding the optimal policy in RL, which is why we use it as a baseline from which we search for possible improvements, namely curriculum learning methods.
+Proximal Policy Optimization (PPO) is a policy‑gradient method that improves upon previous methods in the literature through its relative ease of implementation—requiring just first‑order optimization—and greater robustness relative to optimization techniques such as Trust Region Policy Optimization (TRPO) {% cite schulman2017proximalpolicyoptimizationalgorithms %}. While the objective function maximized by TRPO is the expectation of the product of the advantage and a probability ratio measuring the change between the new and old policy at an update, PPO’s objective function **clips** the probability ratio in this surrogate objective in order to prevent the policy from making unstable updates while simultaneously continuing to allow for exploration. Clipping also avoids having to constrain the KL divergence, making the process computationally simpler and enabling policy updates over multiple epochs. PPO’s simplicity and stability make it a commonplace strategy for finding the optimal policy in RL, which is why we use it as a baseline from which we search for possible improvements, namely curriculum learning methods.
 
 ---
 
 ## 3 Literature Review
-Atanassov, Ding, Kober, Havoutis, and Santina use curriculum learning to stratify the problem of quadrupedal jumping into different sub‑tasks, in order to demonstrate that reference trajectories of mastered jumping are not necessary for learning the optimal policy in this scenario [1]. This increases the adaptability of such a policy, because it is learned by the robot on its own, enabling it to generalize better to unseen real‑world scenarios. Another important component of achieving the optimal policy is reward shaping, which Kim, Kwon, Kim, Lee, and Oh tackle in a stage‑wise fashion in the context of a humanoid backflip [2]. By developing customized reward and cost definitions for each element of a successful backflip, a complex maneuver like this is segmented into an intuitive fashion that translates well to real‑world dynamics.
+Atanassov, Ding, Kober, Havoutis, and Santina use curriculum learning to stratify the problem of quadrupedal jumping into different sub‑tasks, in order to demonstrate that reference trajectories of mastered jumping are not necessary for learning the optimal policy in this scenario {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}. This increases the adaptability of such a policy, because it is learned by the robot on its own, enabling it to generalize better to unseen real‑world scenarios. Another important component of achieving the optimal policy is reward shaping, which Kim, Kwon, Kim, Lee, and Oh tackle in a stage‑wise fashion in the context of a humanoid backflip {% cite kim2024stagewiserewardshapingacrobatic %}. By developing customized reward and cost definitions for each element of a successful backflip, a complex maneuver like this is segmented into an intuitive fashion that translates well to real‑world dynamics.
 
 ---
 
@@ -61,7 +61,7 @@ Q^\pi_P(s,a)=\mathbb{E}_\pi\Bigl[\sum_{i=0}^\infty \gamma^i\,r(s_i,a_i)\mid s_0=
 $$
 
 ### 4.1 Quadruped Jumping Obstacle Avoidance MDP
-As outlined in Section 1, in this report we extend the work of Atanassov *et al.* to enable a quadruped to jump over dynamic obstacles. This enhancement requires not only integrating curriculum learning, but also modifying the underlying MDP formulation to account for the quadruped’s perception module’s feedback as shown in Figure 1.
+As outlined in Section 1, in this report we extend the work of {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %} to enable a quadruped to jump over dynamic obstacles. This enhancement requires not only integrating curriculum learning, but also modifying the underlying MDP formulation to account for the quadruped’s perception module’s feedback as shown in Figure 1.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -73,7 +73,7 @@ Overview of the hierarchical control framework for a quadruped robot. The traine
 </div>
 
 #### State Space
-Building on [1], we leverage a memory of previous observations and actions to enable the agent to implicitly reason about its own dynamics. We concatenate over a window of $N$ timesteps:
+Building on {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}, we leverage a memory of previous observations and actions to enable the agent to implicitly reason about its own dynamics. We concatenate over a window of $N$ timesteps:
 - Base linear velocity $\mathbf{v}\in\mathbb{R}^{3\times N}$  
 - Base angular velocity $\boldsymbol{\omega}\in\mathbb{R}^{3\times N}$  
 - Joint positions $\mathbf{q}\in\mathbb{R}^{12\times N}$ and velocities $\dot{\mathbf{q}}\in\mathbb{R}^{12\times N}$  
@@ -96,7 +96,7 @@ Overview of the state representation used for training our jumping over dynamic 
 As is standard, the policy outputs deviations $\Delta\mathbf{q}\in\mathbb{R}^{12}$ from nominal joint positions $\mathbf{q}^{\mathrm{nom}}\in\mathbb{R}^{12}$, which are filtered, scaled, and then passed to a low‑level PD controller.
 
 #### Reward
-Inspired by [1], we define
+Inspired by {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}, we define
 $$
 r_{\mathrm{total}} = r^+ \exp\!\Bigl(-\|\;r^-\;\|^2/\sigma\Bigr)^4,
 $$
@@ -107,7 +107,7 @@ where positive components $r^+$ are multiplied by an exponential penalty on the 
 ---
 
 ## 5 State Initialization & Domain Randomization
-Static start states can hinder exploration. Peng *et al.*’s Reference State Initialization (RSI) [3] samples initial states from an expert trajectory. In our work we use a modified RSI: for Stage I we uniformly sample height and $z$‑velocity as in Table 1.
+Static start states can hinder exploration. Peng *et al.*’s Reference State Initialization (RSI) {% cite Peng_2018 %} samples initial states from an expert trajectory. In our work we use a modified RSI: for Stage I we uniformly sample height and $z$‑velocity as in Table 1.
 
 | State Variable       | Min  | Max  |
 |----------------------|------|------|
@@ -145,12 +145,12 @@ State‑space variables related to the obstacle.
 Stage I training performance, demonstrating the impact of RSI.
 </div>
 
-Domain randomization—varying friction, masses, latencies, etc.—further improves sim‑to‑real generalization [4] and was adopted from [1].
+Domain randomization—varying friction, masses, latencies, etc.—further improves sim‑to‑real generalization {% cite tobin2017domainrandomizationtransferringdeep %} and was adopted from {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}.
 
 ---
 
 ## 6 Obstacle Avoidance Curriculum Learning
-Curriculum learning [5, 6] presents tasks in increasing order of difficulty. In quadruped jumping [1], Stage I teaches jumps in place, Stage II teaches positional jumps, and Stage III jumps onto platforms. We adapt this to:
+Curriculum learning [5, 6] presents tasks in increasing order of difficulty. In quadruped jumping {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}, Stage I teaches jumps in place, Stage II teaches positional jumps, and Stage III jumps onto platforms. We adapt this to:
 
 1. **Stage I (5 k iters):** learn to jump in place (no obstacle).  
 2. **Stage II (15 k iters):** introduce flying obstacle, add collision penalty  
@@ -202,13 +202,3 @@ We demonstrated that PPO plus a two‑stage curriculum and modified RSI enable a
 - Predictive modules for obstacle trajectories.
 
 ---
-
-## References
-
-[1] Vassil Atanassov, Jiatao Ding, Jens Kober, Ioannis Havoutis, and Cosimo Della Santina. *Curriculum‑Based Reinforcement Learning for Quadrupedal Jumping: A Reference‑free Design*. arXiv:2401.16337, 2024.  
-[2] Dohyeong Kim, Hyeokjin Kwon, Junseok Kim, Gunmin Lee, and Songhwai Oh. *Stage‑Wise Reward Shaping for Acrobatic Robots: A Constrained Multi‑Objective Reinforcement Learning Approach*. arXiv:2409.15755, 2024.  
-[3] Xue Bin Peng, Pieter Abbeel, Sergey Levine, and Michiel van de Panne. *DeepMimic: example‑guided deep reinforcement learning of physics‑based character skills*. ACM Trans. Graph., 37(4):1–14, 2018. DOI: 10.1145/3197517.3201311  
-[4] Josh Tobin, Rachel Fong, Alex Ray, Jonas Schneider, Wojciech Zaremba, and Pieter Abbeel. *Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World*. arXiv:1703.06907, 2017.  
-[5] Yoshua Bengio, Jérôme Louradour, Ronan Collobert, and Jason Weston. *Curriculum learning*. In Proc. 26th Annu. Int. Conf. Mach. Learn., pages 41–48, 2009.  
-[6] Sanmit Narvekar, Bei Peng, Matteo Leonetti, Jivko Sinapov, Matthew E. Taylor, and Peter Stone. *Curriculum Learning for Reinforcement Learning Domains: A Framework and Survey*. arXiv:2003.04960, 2020.  
-[7] John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. *Proximal Policy Optimization Algorithms*. arXiv:1707.06347, 2017.  
