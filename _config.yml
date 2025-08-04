@@ -50,8 +50,8 @@ navbar_fixed: true
 footer_fixed: true
 search_enabled: true
 socials_in_search: true
-posts_in_search: true
-bib_search: true
+posts_in_search: false
+bib_search: false
 
 # Dimensions
 max_width: 930px
@@ -143,12 +143,12 @@ newsletter:
 # -----------------------------------------------------------------------------
 
 collections:
-  books:
-    output: true
-  news:
-    defaults:
-      layout: post
-    output: true
+  # books:
+  #   output: false
+  # news:
+  #   defaults:
+  #     layout: post
+  #   output: false
   projects:
     output: true
 
@@ -254,14 +254,14 @@ terser:
 # -----------------------------------------------------------------------------
 
 jekyll-archives:
-  posts:
-    enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
-    permalinks:
-      year: "/blog/:year/"
-      tags: "/blog/:type/:name/"
-      categories: "/blog/:type/:name/"
-  books:
-    enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
+  # posts:
+  #   enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
+  #   permalinks:
+  #     year: "/blog/:year/"
+  #     tags: "/blog/:type/:name/"
+  #     categories: "/blog/:type/:name/"
+  # books:
+  #   enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
 
 display_tags: ["formatting", "images", "links", "math", "code", "blockquotes"] # these tags will be displayed on the front page of your blog
 display_categories: ["external-services"] # these categories will be displayed on the front page of your blog

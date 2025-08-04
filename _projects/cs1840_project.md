@@ -1,7 +1,7 @@
 ---
 layout: page
 title: RL for High-Performance Jumping
-description: Used a curriculum learning framework to teach simulation quadrupeds to jump. Worked on and written with Aryan Naveen and Pranay Varada.
+description: Used a curriculum learning framework to teach simulation quadrupeds to jump. Worked on and written with Aryan Naveen and Pranay Varada. Completed for CS1840 - Introduction to Reinforcement Learning
 img: assets/img/state_space.png
 importance: 1
 category: work
@@ -13,28 +13,26 @@ Agents acting in dynamic environments must be able to adapt to the conditions of
 
 ---
 
-## 1 Introduction
+## Introduction
 Throughout the field of reinforcement learning, there is significant demand for creating strategies to learn an optimal policy that can achieve a desired reward across changing environments. Furthermore, it is essential that such a policy can *understand* the changes in these environments and act accordingly. After all, many environments in the real world are non‑stationary, with varying conditions in weather and terrain acting on agents, for example. Adaptive policies are also suitable for long‑term success because of their higher levels of robustness. In use cases from search‑and‑rescue operations to industrial inspections, such adaptability can be critical.
 
 Our project aims to solve this problem of understanding changing environments through teaching a quadruped to react to an obstacle moving towards it with a random angle and velocity. Quadrupedal robots such as Boston Dynamics' Spot and ANYbotics' ANYmal are particularly advantageous for undertaking such a project for three reasons. First, there is extensive literature on reinforcement learning for quadruped locomotion, which means that we can iterate on different implementations of RL strategies in order to solve new problems. Specifically, while quadrupedal jumping may be well studied, our project aims to understand how an agent can react to random timing and position. Second, simulations of quadruped movement are both high‑dimensional and visually easy to comprehend, making it clear what the agent has learned once the training process is complete. Third, there is a strong basis for quadruped simulation and translation to real‑world situations where changing environments may be at play; a desire to understand environments motivated our decision to work on this project.
 
 To tackle the particular scenario of jumping over a moving obstacle, we consider several RL techniques. We begin with Proximal Policy Optimization (PPO) as the foundational approach, and subsequently integrate curriculum learning strategies into the training process to systematically optimize the quadruped's ability to master this (perhaps surprisingly) complex task. Curriculum learning breaks this task down into sub‑problems, such that the quadruped first learns how to jump, and once it has mastered that skill, learns how to jump over a moving obstacle.
 
-The remainder of the paper is structured as follows: Sections 2 and 3 detail the existing theory and literature that are pertinent to the experiments we carried out in this report; Section 4 details the modified MDP for our desired problem setting and task of jumping over dynamic obstacles. Sections 5 and 6 detail the selected approaches to solving this problem based on the pre‑existing literature. Finally, in Section 7 we detail the simulated results we observed and evaluate the learned behavior’s performance for various approaches.
+---
+
+## Preliminaries
+Proximal Policy Optimization (PPO) is a policy‑gradient method that improves upon previous methods in the literature through its relative ease of implementation—requiring just first‑order optimization—and greater robustness relative to optimization techniques such as Trust Region Policy Optimization (TRPO) {% cite schulman2017proximalpolicyoptimizationalgorithms %}. While the objective function maximized by TRPO is the expectation of the product of the advantage and a probability ratio measuring the change between the new and old policy at an update, PPO’s objective function clips the probability ratio in this surrogate objective in order to prevent the policy from making unstable updates while simultaneously continuing to allow for exploration. Clipping also avoids having to constrain the KL divergence, making the process computationally simpler and enabling policy updates over multiple epochs. PPO’s simplicity and stability make it a commonplace strategy for finding the optimal policy in RL, which is why we use it as a baseline from which we search for possible improvements, namely curriculum learning methods.
 
 ---
 
-## 2 Preliminaries
-Proximal Policy Optimization (PPO) is a policy‑gradient method that improves upon previous methods in the literature through its relative ease of implementation—requiring just first‑order optimization—and greater robustness relative to optimization techniques such as Trust Region Policy Optimization (TRPO) {% cite schulman2017proximalpolicyoptimizationalgorithms %}. While the objective function maximized by TRPO is the expectation of the product of the advantage and a probability ratio measuring the change between the new and old policy at an update, PPO’s objective function **clips** the probability ratio in this surrogate objective in order to prevent the policy from making unstable updates while simultaneously continuing to allow for exploration. Clipping also avoids having to constrain the KL divergence, making the process computationally simpler and enabling policy updates over multiple epochs. PPO’s simplicity and stability make it a commonplace strategy for finding the optimal policy in RL, which is why we use it as a baseline from which we search for possible improvements, namely curriculum learning methods.
-
----
-
-## 3 Literature Review
+## Literature Review
 Atanassov, Ding, Kober, Havoutis, and Santina use curriculum learning to stratify the problem of quadrupedal jumping into different sub‑tasks, in order to demonstrate that reference trajectories of mastered jumping are not necessary for learning the optimal policy in this scenario {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}. This increases the adaptability of such a policy, because it is learned by the robot on its own, enabling it to generalize better to unseen real‑world scenarios. Another important component of achieving the optimal policy is reward shaping, which Kim, Kwon, Kim, Lee, and Oh tackle in a stage‑wise fashion in the context of a humanoid backflip {% cite kim2024stagewiserewardshapingacrobatic %}. By developing customized reward and cost definitions for each element of a successful backflip, a complex maneuver like this is segmented into an intuitive fashion that translates well to real‑world dynamics.
 
 ---
 
-## 4 Problem Formulation
+## Problem Formulation
 We utilize a Markov Decision Process (MDP) as the underlying sequential decision‑making model for our RL problem. The MDP is described as a tuple  
 $$
 \mathcal{M} = (\mathcal{S}, \mathcal{A}, r, P, \rho, \gamma)
@@ -60,8 +58,8 @@ $$
 Q^\pi_P(s,a)=\mathbb{E}_\pi\Bigl[\sum_{i=0}^\infty \gamma^i\,r(s_i,a_i)\mid s_0=s,\;a_0=a\Bigr].
 $$
 
-### 4.1 Quadruped Jumping Obstacle Avoidance MDP
-As outlined in Section 1, in this report we extend the work of {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %} to enable a quadruped to jump over dynamic obstacles. This enhancement requires not only integrating curriculum learning, but also modifying the underlying MDP formulation to account for the quadruped’s perception module’s feedback as shown in Figure 1.
+### Quadruped Jumping Obstacle Avoidance MDP
+As outlined in the introduction, in this report we extend the work of {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %} to enable a quadruped to jump over dynamic obstacles. This enhancement requires not only integrating curriculum learning, but also modifying the underlying MDP formulation to account for the quadruped’s perception module’s feedback as shown in Figure 1.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -69,7 +67,7 @@ As outlined in Section 1, in this report we extend the work of {% cite atanass
     </div>
 </div>
 <div class="caption">
-Overview of the hierarchical control framework for a quadruped robot. The trained policy $\pi$ yields desired joint position deviations from the nominal joint positions that are then fed into a low‑level PD controller producing necessary torques $\tau$ for each joint.
+Figure 1: Overview of the hierarchical control framework for a quadruped robot. The trained policy $\pi$ yields desired joint position deviations from the nominal joint positions that are then fed into a low‑level PD controller producing necessary torques $\tau$ for each joint.
 </div>
 
 #### State Space
@@ -89,25 +87,30 @@ To handle dynamic obstacles, we add obstacle detection flags $i^\zeta$ and obsta
     </div>
 </div>
 <div class="caption">
-Overview of the state representation used for training our jumping over dynamic obstacle policies. The state vector $s_t\in\mathbb{R}^{60N}$ is constructed by concatenating perception states (obstacle detection and endpoints) and robot states over the past $N$ timesteps.
+Figure 2: Overview of the state representation used for training our jumping over dynamic obstacle policies. The state vector $s_t\in\mathbb{R}^{60N}$ is constructed by concatenating perception states (obstacle detection and endpoints) and robot states over the past $N$ timesteps.
 </div>
 
 #### Action Space
-As is standard, the policy outputs deviations $\Delta\mathbf{q}\in\mathbb{R}^{12}$ from nominal joint positions $\mathbf{q}^{\mathrm{nom}}\in\mathbb{R}^{12}$, which are filtered, scaled, and then passed to a low‑level PD controller.
+As is standard in quadruped policies, our policy generates the desired twelve actuated joint angles $\mathbf{q}^{\texttt{des}} \in \mathbb{R}^{12}$ for control. Specifically, the policy learns the deviation from the nominal joint positions $\mathbf{q}^{\texttt{nom}} \in \mathbb{R}^{12}$. Additionally, it is standard for the output actions to be smoothened utilizing a low-pass filter and then scaled before being added to $\textbf{q}^{\texttt{nom}}$ to compute the $\textbf{q}^{\texttt{des}}$ for the motor servos. As visualized in Figure 1, a low level controller is utilized to compute the necessary joint torques to attain the computed setpoints.
 
 #### Reward
 Inspired by {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}, we define
 $$
 r_{\mathrm{total}} = r^+ \exp\!\Bigl(-\|\;r^-\;\|^2/\sigma\Bigr)^4,
 $$
-where positive components $r^+$ are multiplied by an exponential penalty on the negative components $r^-$.  
+where positive components $r^+$ are multiplied by an exponential penalty on the negative components $r^-$. This allows for the observed reward to remain positive, where incurred penalties scale down the observe reward to improve stability, helping to combat local minimas such as standing behaviors without jumping to avoid energy penalties. 
+
 - **Dense rewards:** tracking flight velocity, squat height, foot clearance, and penalizing energy use.  
 - **Sparse rewards:** episode‑level bonuses for successful jumps and penalties for fall‑over, collision, or large orientation errors.
 
 ---
 
-## 5 State Initialization & Domain Randomization
-Static start states can hinder exploration. Peng *et al.*’s Reference State Initialization (RSI) {% cite Peng_2018 %} samples initial states from an expert trajectory. In our work we use a modified RSI: for Stage I we uniformly sample height and $z$‑velocity as in Table 1.
+## State Initialization & Domain Randomization
+An important aspect of such an MDP formulation is selecting the _initial state distribution_, which we will represent $\rho(\mathcal{S})$. When applying learning methods to agents such as quadrupeds, for many tasks it is convenient to initialize the agent in a static state in the learning process. However, for certain tasks such as quadruped jumping, such an initial state distribution is undesirable when a lack of diverse and informative initial states discourages the agent from exploring desired trajectories. Consider the quadruped jumping scenario in which termination penalties are applied to the reward function when the quadruped falls over. Having not yet learned how to stick a landing, the agent sees that jumping high leads to a large penalty and stops attempting to learn to jump high. Further, static initialization can make it difficult for a policy to learn that certain states have high rewards. In the quadruped jumping example, if the quadruped is always initialized on the floor, the policy never sees that height off of the floor is associated with high positive rewards.
+
+To combat such scenarios, Peng, Abeel, Levine, and van de Panne introduce a strategy of _reference state initialization (RSI)_ {% cite Peng_2018 %}. This method of state initialization is an imitation learning technique in which the agent's initial state is sampled from the reference trajectory it is trying to learn. More formally, for reference expert trajectory $\tau_{ref} =$ $s^{ref}_0, (s^{ref}_1, a^{ref}_1)\dots (s^{ref}_{H-1})$, is given by some distribution across the values of $s^{ref}$. The agent then encounters desirable states along the expert trajectory, even before the policy has acquired the proficiency needed to reach those states {% cite Peng_2018 %}.
+
+In their quadruped jumping formulation, Atanassov, Ding, Kober, Havoutis and Santina use a modified version of RSI in which they sample a random height and upward velocity from a predefined range rather than using an explicit reference trajectory {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}. Since there is no reference trajectory, we want an intelligent choice of $S_{init}\subset S$ such that $s_0\sim \rho(\mathcal{S}_{init})$ for the given task. In our case, $s_0\sim \mathcal{U}(\mathcal{S}_{init})$ where $\mathcal{U}$ represents the uniform distribution and $\mathcal{S}_{init}$ takes the range of values shown in table Table 1 for stage I training. It should be noted that for stage I training, all components of the state space that are properties of the obstacle are set to 0. To highlight the importance of RSI, Figure 4 demonstrates the impact of implementing RSI in the first stage.
 
 | State Variable       | Min  | Max  |
 |----------------------|------|------|
@@ -142,7 +145,7 @@ State‑space variables related to the obstacle.
     </div>
 </div>
 <div class="caption">
-Stage I training performance, demonstrating the impact of RSI.
+Figure 4: Stage I training performance, demonstrating the impact of RSI.
 </div>
 
 Domain randomization—varying friction, masses, latencies, etc.—further improves sim‑to‑real generalization {% cite tobin2017domainrandomizationtransferringdeep %} and was adopted from {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}.

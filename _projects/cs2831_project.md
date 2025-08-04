@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Semantic Segmentation of Aerial Photographs
-description: Per-pixel land use classification of sattelite imagery of Mumbai
+description: Per-pixel land use classification of sattelite imagery of Mumbai. Completed for CS2831 - Advanced Computer Vision
 img: assets/img/model_1_prediction_grid_cropped.png
 importance: 1
 category: work
@@ -37,6 +37,8 @@ $$
 $$
 \mathrm{F1} = 2 \times \frac{\mathrm{Precision} \times \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}
 $$
+
+Intuitively, Precision can be interpreted as the proportion of predicted positive pixels that are correctly segmented, Recall as the proportion of ground truth pixels that are correctly segmented, and F1 as the harmonic mean of both.
 
 ### Transposed Convolution
 
@@ -74,7 +76,7 @@ Distribution of Labels Across Patches {% cite Dabra2023 %}
 
 ### U-Net Architecture
 
-Ronneberger, Fischer, and Brox proposed the first U-Net architecture to segment cells in microscopic images {% cite ronneberger2015unetconvolutionalnetworksbiomedical %}. The symmetric model consists of a contracting encoder and an expanding decoder with skip connections. In the encoder, each level applies a 3×3 convolution with ReLU activation followed by 2×2 max pooling to reduce spatial dimensions by half. The decoder performs a series of 2×2 upconvolutions to double the spatial dimensions and uses skip connections to preserve spatial information. The final 1×1 convolution reduces the number of channels to the number of classes.
+Ronneberger, Fischer, and Brox proposed the first U-Net architecture to segment cells in microscopic images {% cite ronneberger2015unetconvolutionalnetworksbiomedical %}. The symmetric model consists of a contracting path, or encoder, on the left half and an expanding path, or decoder, on the right half. In the encoder, each level applies a $3\times 3$ convolution with ReLU activation before a $2\times 2$ max pooling operation is applied with stride 2 which reduces spatial dimensions by half. By doing this, the encoder is learning increasingly abstract representations of the original image while downsampling for computational efficiency. The decoder starts with the lowest spatial resolution, most abstract features and performs a series of $2\times 2$ upconvolutions which doubles the spatial dimensions. Importantly, a skip connection from the encoder of equivalent spatial dimension to each decoder layer is included to preserve spatial information lost during downsampling. The final output layer performs a $1\times 1$ convolution that reduces the number of channels to the number of classes.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -87,27 +89,47 @@ The Original U-Net Architecture {% cite ronneberger2015unetconvolutionalnetworks
 
 ### Loss Functions
 
+As with most classification networks, the output of our semantic segmentation model at each pixel is a vector of probabilities **p**, where each probability for class *k* is given by the softmax of the activations of each class input:
+
+$$
+p_k(x, y) = \frac{\exp\bigl(a_k(x, y)\bigr)}{\sum_{k'=1}^{|k|} \exp\bigl(a_{k'}(x, y)\bigr)}
+$$
+
+where $a_k(x,y)$ is the activation of class $k$ at pixel $(x,y)$ and $\lvert\mathbf{k}\rvert$ is the number of classes (in our case, 6). Then, $\mathbf{p}_k(x,y)$ can be interpreted as the probability that pixel $(x,y)$ belongs to class $k$.
+
 #### Cross-Entropy
+
+The most common loss function for semantic segmentation is pixel-wise cross-entropy, defined as
 
 $$
 \mathcal{L}_{ce} = -\sum_{(x,y)} y(x,y)\,\log p(x,y)
 $$
 
+where $\mathbf{y}(x,y)$ is a one-hot encoded vector of the true class of pixel $(x,y)$
+
 #### Weighted Cross-Entropy
+
+Real-world semantic segmentation datasets are often class-imbalanced, leading to issues with basic cross-entropy loss wherein the network is biased toward majority classes. To combat this, class-specific weights are often introduced to the loss function, often derived from the original data statistics {% cite csurka2023semanticimagesegmentationdecades %}. Such a cost-sensitive loss function can be seen in the original proposal where the authors introduce a weighting function for each pixel that both balanced the classes and emphasized learning separation borders between cells {% cite ronneberger2015unetconvolutionalnetworksbiomedical %}. Here, the loss function is of the form
 
 $$
 \mathcal{L}_{wce} = -\sum_{(x,y)} w(x,y)\;y(x,y)\,\log p(x,y)
 $$
 
+where $w$ is a pre-computed function of $(x,y)$.
+
 #### Focal Loss
 
+Focal loss includes a focusing parameter $\gamma$ which controls the down-weighting of well-classified pixels, designed to handle class imbalance and prioritize difficult samples with dice loss for improved segmentation overlap.
+
 $$
-\mathcal{L}_{wfl} = -\sum_{(x,y)}\sum_{c=1}^K w_c\,(1 - p_c(x,y))^\gamma\,y_c(x,y)\,\log p_c(x,y)
+\mathcal{L}_{wfl} = -\sum_{(x,y)}\sum_{c=1}^{\lvert k \rvert} w_c\,(1 - p_c(x,y))^\gamma\,y_c(x,y)\,\log p_c(x,y)
 $$
 
 ### Data Augmentation
 
-The 120×120 patches are upsampled to 128×128 to be compatible with the five downsampling stages (128 is a multiple of 32). At the start of each epoch, patches and masks are randomly rotated by 0°, 90°, 180°, or 270° to add rotational invariance and prevent overfitting.
+The image patches are first upsampled to a resolution of $128\times 128$ to ensure they are compatible with the chosen network architecture, which involves a series of convolutional and pooling operations. This particular size is important because the network utilizes skip-connections between the encoder and decoder layers, and it includes five sequential downsampling stages. Each downsampling stage reduces both the height and width of the input by a factor of two, and since $2^5 = 32$, the input dimensions must be multiples of 32 to avoid boundary issues or the need for cropping. By setting the image patches to $128\times 128$, we ensure smooth downsampling at every stage, maintaining feature alignment between the encoder and decoder pathways for effective information transfer.
+
+To further enhance the training process and reduce the risk of overfitting, at the start of each training epoch, the original image patch and its associated mask are randomly rotated by a multiple of $90^\circ$. This approach adds rotational invariance to the model’s learned features and expands the effective size of the training dataset, helping the network generalize better to novel samples and preventing it from simply memorizing the training images.
 
 ### Model Selection
 
@@ -115,15 +137,17 @@ Pre-trained models from the Segmentation Models PyTorch library {% cite Iakubovs
 
 ### Optimizer & Scheduler
 
-The Adam optimizer was used with an initial learning rate of 1×10⁻⁴ {% cite Dabra2023 %}. A LambdaLR scheduler decayed the learning rate by a factor of 0.1 every 40 epochs:
+The Adam optimizer was used with an initial learning rate of $1\times 10^{-4}$ {% cite Dabra2023 %}. A LambdaLR scheduler decayed the learning rate by a factor of 0.1 every 40 epochs:
 
 $$
 \lambda(\text{epoch}) = 0.1^{\frac{\text{epoch}}{40}}
 $$
 
+This scheduler systematically reduces the learning rate as training progresses, implementing an exponential decay strategy. Such a decay is beneficial for fine-tuning as it allows the model to make large updates during the initial phases of training when significant adjustments are needed, and smaller, more precise updates in later stages to refine the learned features. 
+
 ### Early Stopping
 
-Training was halted if the validation loss did not improve for five consecutive epochs.
+To mitigate the risks of overfitting and the excessive consumption of computational resources during model training, we incorporate an early stopping mechanism in our training pipeline. Early stopping serves as a regularization technique by monitoring the model's performance on a separate validation dataset and halting the training process when no significant improvement is observed over a predefined number of epochs. Specifically, in my implementation, we track the validation loss at each training epoch and terminate the training if the validation loss does not decrease for five consecutive epochs.
 
 ## Results
 
@@ -203,7 +227,7 @@ Model 5 Predictions
 
 ### Model 6
 
-SCSE attention blocks were incorporated in the decoder to recalibrate feature channels and focus on important regions {% cite roy2018recalibratingfullyconvolutionalnetworks %}.
+SCSE attention blocks were incorporated in the decoder to recalibrate feature channels and focus on important regions {% cite roy2018recalibratingfullyconvolutionalnetworks %}. SCSE blocks recalibrate feature responses by adaptively weighting each channel through a squeeze operation (global average pooling) followed by an excitation step using fully connected layers and sigmoid activation. This mechanism allows the network to emphasize important features while suppressing irrelevant ones, enhancing the model's focus on key regions of the feature maps.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -238,7 +262,7 @@ Model 7 Predictions
 
 ## Model Comparison
 
-Model 1 achieved the best balance across metrics, consistently leading in Dice, IoU, Precision, and Recall. Model 4 offered computational efficiency with minimal accuracy loss. Model 6’s attention blocks improved performance on challenging classes, while Models 2 and 7 underperformed.
+Model 1 stands out as the best-performing model overall. It consistently achieves the highest Dice and IoU scores for critical classes, while maintaining strong performance across other classes.  Model 4 closely follows, excelling particularly in Class 1 and Class 3, where it outperforms other models. Model 6 also demonstrates strong performance, particularly in Class 3 and Class 5, where its inclusion of SCSE attention blocks helps improve feature focus and segmentation quality. While it falls slightly behind Models 1 and 4 in certain classes, it remains a reliable model with strong average Dice and IoU scores. On the other hand, Model 2 and Model 7 underperform.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -273,8 +297,10 @@ This work highlights the strengths and trade-offs of various modifications to th
 
 ## Future Work
 
-Future improvements include:
-- Multi-scale feature extraction (e.g., feature pyramids)  
-- Conditional Random Fields for post-processing  
-- Advanced encoders (ResNet, Vision Transformers)  
-- Exploring other architectures (DeepLabv3+, PSPNet, Mask R-CNN)  
+While this project showed promising results, improvements can certainly be made. The models seemed to struggle with fine-detailed class boundaries, for example, a jagged settlement bordering a patch of vegetation. To enhance the precision of these boundaries, future work could explore incorporating higher-resolution input data, which would provide more detailed information for the model to learn from. Additionally, implementing multi-scale feature extraction techniques, such as feature pyramids, could help the model capture both global and local context more effectively. Another promising approach is the integration of Conditional Random Fields as a post-processing step to refine segmentation edges by considering spatial dependencies and contextual relationships between pixels. Employing these methods could lead to smoother and more accurate delineations of classes with intricate boundaries and improve overall segmentation performance.
+
+Class imbalance proved to be an issue throughout the project, with classes like water dominating the optimization problem. While class-balancing was attempted through loss function weighting, more methods exist to address this challenge. Future work could investigate advanced strategies such as Synthetic Minority Over-sampling Technique (SMOTE) to generate synthetic samples for underrepresented classes, thereby increasing their presence in the training dataset. Another potential approach is the use of data augmentation techniques such as geometric transformations or color jittering to artificially enhance the diversity and quantity of these classes. Exploring these methods could lead to a more balanced training process and improve the model's ability to accurately segment all classes.
+
+I chose a relatively basic encoder given time and compute constraints, but more advanced encoders such as ResNet or Vision Transformers (ViT) could be integrated to enhance feature extraction capabilities. Vision Transformers, which leverage self-attention mechanisms to capture long-range dependencies within the image, might enable the model to better understand complex spatial relationships, leading to more accurate semantic segmentation.
+
+Finally, it would be useful to explore other state-of-the-art models for semantic segmentation beyond the U-Net. Architectures such as DeepLabv3+, PSPNet, and Mask R-CNN offer alternative approaches that incorporate advanced techniques like atrous convolutions, pyramid pooling modules, and instance segmentation capabilities. For example, DeepLabv3+ utilizes atrous spatial pyramid pooling to capture multi-scale contextual information, which can improve the segmentation of objects at different sizes. PSPNet's pyramid pooling module effectively aggregates global and local context, enhancing the model's ability to understand complex scenes. Mask R-CNN extends the capabilities of object detection frameworks to perform instance segmentation, allowing for more precise delineation of objects within an image.
