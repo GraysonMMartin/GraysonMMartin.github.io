@@ -108,27 +108,77 @@ where positive components $r^+$ are multiplied by an exponential penalty on the 
 ## State Initialization & Domain Randomization
 An important aspect of such an MDP formulation is selecting the _initial state distribution_, which we will represent $\rho(\mathcal{S})$. When applying learning methods to agents such as quadrupeds, for many tasks it is convenient to initialize the agent in a static state in the learning process. However, for certain tasks such as quadruped jumping, such an initial state distribution is undesirable when a lack of diverse and informative initial states discourages the agent from exploring desired trajectories. Consider the quadruped jumping scenario in which termination penalties are applied to the reward function when the quadruped falls over. Having not yet learned how to stick a landing, the agent sees that jumping high leads to a large penalty and stops attempting to learn to jump high. Further, static initialization can make it difficult for a policy to learn that certain states have high rewards. In the quadruped jumping example, if the quadruped is always initialized on the floor, the policy never sees that height off of the floor is associated with high positive rewards.
 
-To combat such scenarios, Peng, Abeel, Levine, and van de Panne introduce a strategy of _reference state initialization (RSI)_ {% cite Peng_2018 %}. This method of state initialization is an imitation learning technique in which the agent's initial state is sampled from the reference trajectory it is trying to learn. More formally, for reference expert trajectory $\tau_{ref} =$ $s^{ref}_0, (s^{ref}_1, a^{ref}_1)\dots (s^{ref}_{H-1})$, is given by some distribution across the values of $s^{ref}$. The agent then encounters desirable states along the expert trajectory, even before the policy has acquired the proficiency needed to reach those states {% cite Peng_2018 %}.
+To combat such scenarios, Peng, Abeel, Levine, and van de Panne introduce a strategy of _reference state initialization (RSI)_ {% cite Peng_2018 %}. This method of state initialization is an imitation learning technique in which the agent's initial state is sampled from the reference trajectory it is trying to learn. More formally, for reference expert trajectory $$\tau_{ref} = \{s^{ref}_0, (s^{ref}_1, a^{ref}_1)\dots (s^{ref}_{H-1}, a^{ref}_{H-1})\}$$, $$\rho(\{s^{ref}_0\dots s^{ref}_{H-1}\})$$ is given by some distribution across the values of $s^{ref}$. The agent then encounters desirable states along the expert trajectory, even before the policy has acquired the proficiency needed to reach those states {% cite Peng_2018 %}.
 
-In their quadruped jumping formulation, Atanassov, Ding, Kober, Havoutis and Santina use a modified version of RSI in which they sample a random height and upward velocity from a predefined range rather than using an explicit reference trajectory {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}. Since there is no reference trajectory, we want an intelligent choice of $S_{init}\subset S$ such that $s_0\sim \rho(\mathcal{S}_{init})$ for the given task. In our case, $s_0\sim \mathcal{U}(\mathcal{S}_{init})$ where $\mathcal{U}$ represents the uniform distribution and $\mathcal{S}_{init}$ takes the range of values shown in table Table 1 for stage I training. It should be noted that for stage I training, all components of the state space that are properties of the obstacle are set to 0. To highlight the importance of RSI, Figure 4 demonstrates the impact of implementing RSI in the first stage.
+In their quadruped jumping formulation, Atanassov, Ding, Kober, Havoutis and Santina use a modified version of RSI in which they sample a random height and upward velocity from a predefined range rather than using an explicit reference trajectory {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}. Since there is no reference trajectory, we want an intelligent choice of $S_{init}\subset S$ such that $$s_0\sim \rho(\mathcal{S}_{init})$$ for the given task. In our case, $$s_0\sim \mathcal{U}(\mathcal{S}_{init})$$ where $\mathcal{U}$ represents the uniform distribution and $\mathcal{S}_{init}$ takes the range of values shown in table Table 1 for stage I training. It should be noted that for stage I training, all components of the state space that are properties of the obstacle are set to 0. To highlight the importance of RSI, Figure 4 demonstrates the impact of implementing RSI in the first stage.
 
-| State Variable       | Min  | Max  |
-|----------------------|------|------|
-| Height (m)           | 0    | 0.3  |
-| $z$‐velocity (m/s)   | -0.5 | 3    |
+<!-- Table 1: Stage I Initialization Ranges -->
+<table style="table-layout: fixed; width:100%; border-collapse: collapse;">
+  <col style="width: 40%;" />
+  <col style="width: 30%;" />
+  <col style="width: 30%;" />
+  <thead>
+    <tr>
+      <th style="text-align: left; padding: 0.5em; border-bottom: 1px solid #ccc;">State Variable</th>
+      <th style="text-align: left; padding: 0.5em; border-bottom: 1px solid #ccc;">Min</th>
+      <th style="text-align: left; padding: 0.5em; border-bottom: 1px solid #ccc;">Max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 0.5em; vertical-align: top;">Height (m)</td>
+      <td style="padding: 0.5em; vertical-align: top;">0</td>
+      <td style="padding: 0.5em; vertical-align: top;">0.3</td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5em; vertical-align: top;">$z$-velocity (m/s)</td>
+      <td style="padding: 0.5em; vertical-align: top;">-0.5</td>
+      <td style="padding: 0.5em; vertical-align: top;">3</td>
+    </tr>
+  </tbody>
+</table>
+<p><em>Table 1: Initialization ranges for Stage I</em></p>
 
-*Table 1: Initialization ranges for Stage I*  
+<br/>
 
-Stage II adds obstacle randomization (Table 2):
+In addition to using this modified RSI for the quadruped itself, we further utilize randomization of obstacle states in $s_0$ in the second stage of learning. Ranges for $\mathcal{S}_{init}$ are given in Table 2 for stage II training. Here RSI is necessary so that the quadruped learns to jump over obstacles moving at various speeds and with any distance or orientation. An interpretation of the obstacle characteristics is given in Figure3.
 
-| State Variable                        | Min                                     | Max                                     |
-|---------------------------------------|-----------------------------------------|-----------------------------------------|
-| Obstacle distance $r$ (m)             | 3                                       | 7                                       |
-| Obstacle direction $\theta$ (rad)     | 0                                       | $2\pi$                                  |
-| Obstacle orientation $\gamma$ (rad)   | $\frac{\pi}{2}-\theta-\frac{\pi}{3}$    | $\frac{\pi}{2}-\theta+\frac{\pi}{3}$    |
-| Obstacle velocity (m/s)               | 3.5                                     | 7                                       |
-
-*Table 2: Initialization ranges for Stage II*  
+<!-- Table 2: Stage II Initialization Ranges -->
+<table style="table-layout: fixed; width:100%; border-collapse: collapse;">
+  <col style="width: 40%;" />
+  <col style="width: 30%;" />
+  <col style="width: 30%;" />
+  <thead>
+    <tr>
+      <th style="text-align: left; padding: 0.5em; border-bottom: 1px solid #ccc;">State Variable</th>
+      <th style="text-align: left; padding: 0.5em; border-bottom: 1px solid #ccc;">Min</th>
+      <th style="text-align: left; padding: 0.5em; border-bottom: 1px solid #ccc;">Max</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 0.5em; vertical-align: top;">Obstacle distance $r$ (m)</td>
+      <td style="padding: 0.5em; vertical-align: top;">3</td>
+      <td style="padding: 0.5em; vertical-align: top;">7</td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5em; vertical-align: top;">Obstacle direction $\theta$ (rad)</td>
+      <td style="padding: 0.5em; vertical-align: top;">0</td>
+      <td style="padding: 0.5em; vertical-align: top;">$2\pi$</td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5em; vertical-align: top;">Obstacle orientation $\gamma$ (rad)</td>
+      <td style="padding: 0.5em; vertical-align: top;">$\frac{\pi}{2}-\theta-\frac{\pi}{3}$</td>
+      <td style="padding: 0.5em; vertical-align: top;">$\frac{\pi}{2}-\theta+\frac{\pi}{3}$</td>
+    </tr>
+    <tr>
+      <td style="padding: 0.5em; vertical-align: top;">Obstacle velocity (m/s)</td>
+      <td style="padding: 0.5em; vertical-align: top;">3.5</td>
+      <td style="padding: 0.5em; vertical-align: top;">7</td>
+    </tr>
+  </tbody>
+</table>
+<p><em>Table 2: Initialization ranges for Stage II</em></p>
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -136,7 +186,7 @@ Stage II adds obstacle randomization (Table 2):
     </div>
 </div>
 <div class="caption">
-State‑space variables related to the obstacle.
+Figure 3: State‑space variables related to the obstacle.
 </div>
 
 <div class="row">
@@ -148,32 +198,40 @@ State‑space variables related to the obstacle.
 Figure 4: Stage I training performance, demonstrating the impact of RSI.
 </div>
 
-Domain randomization—varying friction, masses, latencies, etc.—further improves sim‑to‑real generalization {% cite tobin2017domainrandomizationtransferringdeep %} and was adopted from {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}.
+In addition to RSI, a related technique called _domain randomization_ is often utilized for policies training in a simulation environment in an attempt to allow for maximum real-world generalization and decrease the sim-to-real gap. This concept was introduced by Tobin, Fong, Ray, Schneider, Zaremba, and Abbeel, wherein instead of training a model on a single simulated environment, the simulator is randomized to expose the model to a wide range of environments at training time {% cite tobin2017domainrandomizationtransferringdeep %}. The original reinforcement learning quadruped environment we built upon includes zero-shot domain randomization for ground friction, ground restitution, additional payload, link mass factor, center of mass displacement, episodic latency, extra per-step latency, motor strength, joint offsets, PD gains, joint friction, and joint damping {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}.
 
 ---
 
-## 6 Obstacle Avoidance Curriculum Learning
-Curriculum learning [5, 6] presents tasks in increasing order of difficulty. In quadruped jumping {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}, Stage I teaches jumps in place, Stage II teaches positional jumps, and Stage III jumps onto platforms. We adapt this to:
+## Obstacle Avoidance Curriculum Learning
+Curriculum learning, generally attributed to Bengio, Louradou, Collober, and Weston, is a sequential method of model training wherein the model is first taught a simple task or building block and then goes on to be trained on more difficult problems that require the building blocks {% cite bengio_curriculum_2009 %}. This method of training a network is an intuitive model for how humans learn complex tasks: students first learn basic math, then use those tools to learn algebra, then use those tools to learn calculus, and so on. Such a learning procedure has been shown to be especially useful for reinforcement learning {% cite narvekar2020curriculumlearningreinforcementlearning %}. Sample efficiency is often vastly improved as the agent learns useful representations and behaviors early in training before moving to more difficult tasks. Stable partial solutions reduce high variance in returns and prevent the agent from getting stuck in poor local optima when faced with complex versions of the task. Because the agent has a sequence of diverse learning experiences, it often generalizes better to new or slightly different tasks.
 
-1. **Stage I (5 k iters):** learn to jump in place (no obstacle).  
-2. **Stage II (15 k iters):** introduce flying obstacle, add collision penalty  
-   $$
-   r_{\mathrm{col}} = \mathbbm{1}\bigl\{\min_{f\in\text{feet}}\|\mathbf{f}-\zeta\|\le0.1\bigr\}.
-   $$
-3. **No revisit to Stage I**—we reduce the squat reward scale from 5 to 1 to prioritize obstacle avoidance over ideal form.
+In the context of quadruped tasks involving jumps, Peng, Abeel, Levine, and van de Panne use curriculum learning in the following manner: stage I teaches the quadruped how to jump, stage II teaches the quadruped how to jump to a desired position and orientation, and stage III teaches the quadruped how to jump onto or over platforms {% cite atanassov2024curriculumbasedreinforcementlearningquadrupedal %}. For our task, we utilize the same stage I training to teach the quadruped how to jump in place. However, instead of making the robot motion more difficult such as the original experiments, we make the next stage more difficult by introducing a flying obstacle to the environment. Accordingly, the reward function is updated to include a sparse penalty and termination for collision with the obstacle. The sparse reward calculation is given below, where $\zeta$ represents the obstacle and the reward scale is -50.
+
+$$
+r_{\mathrm{col}} = \mathbb{1}\bigl\{\min_{f\in\text{feet}}\|\mathbf{f}-\zeta\|\le0.1\bigr\}.
+$$
+
+Another important distinction is that, unlike the original experiments, our agent is not randomly returned to stage \Romannum{1} while training later stages. In the original work, the authors wanted to maintain a more "ideal" jumping motion while learning the later tasks, but our objective mostly values clearing the flying obstacle. A "worse" jumping form is more desirable here, as taking the time to enter an athletic stance sometimes allows a fast-moving obstacle to hit the quadruped before it is able to leave the ground. To reflect this, we decrease the reward scale for crouching in an athletic position before jumping in the second stage from 5 to 1. The reward for crouching to the desired height for an athletic stance is given below.
+
+$$
+r_{squat}=0.6\exp\left(-\frac{(\text{height}-0.2)^2}{0.001}\right)
+$$
 
 ---
 
-## 7 Experiments
+## Experiments
+In our experimental setup, we primarily tested two different strategies for discerning the optimal policy for jumping over a moving obstacle. Firstly, our "control" was training without curriculum learning (20,000 iterations). This process essentially skipped our aforementioned stage I, such that the quadruped would go straight to attempting to master jumping over a moving obstacle. The performance of the curriculum learning-free method served as a baseline for our second strategy: 5,000 iterations in stage I – with no dynamic obstacle present – such that the quadruped would learn to jump in place, followed by 15,000 iterations in stage II with the dynamic obstacle in place, through which the quadruped would ideally use its ability to jump to learn how to jump over this obstacle. We chose these particular numbers of iterations because the policy converged after 5,000 iterations in stage I, and we assumed that stage II would be more difficult. In both cases we utilize the same network architecture in order to isolate the learning algorithms performance.
 
-### 7.1 Training Environment
-We use NVIDIA IsaacGym for massive parallelism—thousands of simulenvs on one GPU—and seamless PyTorch integration.
+### Training Environment
+We train our policies in IsaacGym because of its speed and scalability, resulting from the capability to sample multiple environments in parallel. IsaacGym enables massive parallelism by simulating thousands of environments simultaneously on a single GPU, reducing training time. Its seamless integration with PyTorch and support for high-fidelity physics make it an ideal platform for developing and testing policies in dynamic and complex environments. This efficiency and realism allow us to iterate quickly and deploy robust, high-performing policies. Additionally, IsaacGym offered preexisting support for several quadrupedal-based robot environments, which allowed our research to focus purely on the learning algorithms rather than simulator design. As shown in Figure 6, we are able to train and evaluate realistic policies in IsaacGym.
 
-### 7.2 Network Architecture
-Actor and critic both: FC layers of sizes $|s|$–512–512–(12 or 1), ReLU activations, $\tanh$‑normalized outputs.
+### Network Architecture
+While utilizing PPO, both actor and critic network architectures are the same with only the output layer being different, with the former having 12 output neurons while the latter had 1 to approximate the $Q$ function.
 
-### 7.3 Results
-We evaluated collision counts (out of 50) for obstacles initialized at distances 3–7 m. Curriculum learning outperforms direct training at all distances, especially at 3 m.
+**Architecture.** Three fully connected layers with $\lvert s \rvert$, 512, 512, and 12 neurons. Non-linear activations are included between each layer with a ReLU function. Sampled actions are normalized with a $tanH$ function to ensure that actions remain between -1 to 1 and then scaled appropriately.
+
+### Results
+To compare these two methods, we looked at the number of times (out of 50) that the quadruped collided with an obstacle initialized at radii from 3m to 7m away at 1m increments. This range of distance provided suitable grounds of comparison between the two methods because the obstacle was not initialized too close to or far away from the quadruped. As Figure 5 shows, the curriculum learning method performed better than the method without curriculum learning across each initial distance, and markedly so at a radius of 3m away. While the quadruped failed to clear a majority of obstacles at longer radii, the results tell us that segmenting training into two sub-task sections can be at least somewhat effective in obstacle avoidance.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -181,10 +239,10 @@ We evaluated collision counts (out of 50) for obstacles initialized at distanc
     </div>
 </div>
 <div class="caption">
-Number of collisions at each initialization distance (50 trials).
+Figure 5: Number of collisions at each initialization distance (50 trials).
 </div>
 
-The quadruped learned the jump but often jumped too early at larger radii, landing before the obstacle arrived (Figure 6). Future work should encourage timed jumps.
+Why does the performance at longer radii leave much to be desired? Firstly, consider Figure 6, which demonstrates the quadruped jumping motion. We observed that the quadruped clearly learns how to jump – by settling into an athletic stance, propagating upwards from that stance, and landing decently well on its feet. It even learns how to jump over an obstacle it perceives, as demonstrated by its avoidance of all but three obstacles at a radius of 3 quadruped lengths. However, it is not clear that the quadruped has learned how to properly time its jump. It tends to jump as soon as it has perceived an obstacle, but at longer radii, this can result in a jump and a landing before the obstacle even arrives at the quadruped's position, resulting in a collision. Therefore, in future training, it would be important to encourage patience: the quadruped should gauge the speed of the obstacle such that it jumps only when the obstacle is sufficiently close to be cleared in a single jump.
 
 <div class="row">
     <div class="col-sm mt-3 mt-md-0">
@@ -192,16 +250,28 @@ The quadruped learned the jump but often jumped too early at larger radii, landi
     </div>
 </div>
 <div class="caption">
-The quadruped clears a flying obstacle after training.
+Figure 6: The quadruped clears a flying obstacle after training.
 </div>
 
----
-
-## 8 Conclusion
-We demonstrated that PPO plus a two‑stage curriculum and modified RSI enable a quadruped to jump over moving obstacles. Curriculum learning accelerates skill acquisition and improves obstacle avoidance. Modified RSI broadens training states, and domain randomization aids sim‑to‑real transfer. Future directions include:
-- Teaching the agent to jump *only* when collision is imminent.  
-- Multiple successive jumps (jump‑roping).  
-- Expert trajectories (true RSI) or imitation learning (DAgger).  
-- Predictive modules for obstacle trajectories.
+In addition, as mentioned previously, we do not desire the ideal jumping motion in this scenario, because we want to minimize the time the quadruped takes to enter an athletic stance. It could be that the curriculum learning process as currently constructed places too much emphasis on attaining the _ideal_ jumping form, rather than simply learning _how_ to jump and maximizing obstacle avoidance efficiency from there.
 
 ---
+
+## Conclusion
+In conclusion, this work has demonstrated the feasibility and effectiveness of leveraging reinforcement learning and curriculum learning strategies to enable a quadrupedal robot to perform jumps over dynamic obstacles. With our formulated MDP using PPO as the baseline algorithm, we demonstrated that the structured, multi-stage approach of curriculum learning can feasibly be used to train agents in dynamic environments. The quadruped was guided through tasks with increasing difficulty, starting from basic jumping mechanics and eventually learning the more complex task of dodging flying obstacles.
+
+Beyond curriculum learning, modified RSI was crucial to the project. RSI ensured that the quadruped encountered a broad distribution of initial states, including intermediate positions it would not naturally discover from a static start. This exposure accelerated learning and prevented the policy from converging prematurely to trivial but non-transferable behaviors. Domain randomization was also used, although to truly test its effects the policy should be implemented on a real quadruped to test generalization.
+
+Finally, we utilize intelligent reward shaping to achieve the desired behavior in the second stage. The penalty for not maintaining an athletic stance was reduced to encourage the quadruped to prioritize timing and spatial awareness over good jumping form. Moreover, sparse penalties were introduced for collisions with the obstacle, reinforcing the importance of proactive avoidance strategies.
+
+Overall, this project underscores the power of coupling advanced RL algorithms with principled training strategies. This being said, we note that there is room for significant improvement in the quadruped's performance. Learning the timing of an optimal action is an inherently challenging problem for a MDP given issues like balancing time-horizon discount with the patience needed to account for slowly unfolding dynamic environments.
+
+---
+
+## Future Directions
+
+With more time, there are several different avenues we could pursue to iterate upon this project. Firstly, the obstacle in our experimental setup was guaranteed to pass through the quadruped's position, so one interesting problem to solve would be teaching the quadruped to jump _only_ when an obstacle will directly interfere with its position. In addition, our scenario mimics that of a human jump roping, so exploring the quadruped's ability to perform multiple successive jumps – requiring not just proper jump timing but also a landing maneuver that enables the quadruped to reset for another jump – could be another scenario worth considering.
+
+As far as increased performance in the current environment setup, we have several ideas. First, the reward-shaping for stage II could be improved to better encourage optimal timing of initial ground clearance. Second, RSI in its original format could be utilized by manually creating expert reference trajectories. Imitation learning strategies like DAgger could be implemented in a similar fashion. Finally, a predictive network for obstacle trajectory could be incorporated into the state space, potentially giving the policy better insight than obstacle properties alone.
+
+Returning to our motivation, solving problems like these using curriculum-based reinforcement learning strategies could easily be applicable in real-world scenarios, where obstacle avoidance is often essential for quadrupedal and humanoid robots alike. Breaking down multi-stage problems like clearing obstacles enables agents to learn a variety of skills.

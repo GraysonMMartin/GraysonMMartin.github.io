@@ -26,6 +26,6 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a recent graduate of Harvard University where I studied computer science and applied mathematics. My interests broadly lie in perception & decision-making, especially when applied to robotics, natural agents, and healthcare.
+I am a recent graduate of Harvard University where I studied computer science and applied mathematics. My interests broadly lie in perception & decision-making, especially when applied to robotics and natural agents.
 
 My background spans data science, optimization, reinforcement learning, geometric machine learning, signals and communications, control theory, computer vision, and high-performance computing. My work includes robotics rapid prototyping at Los Alamos National Laboratory and NeuroAI research at The Kempner Institute. I also co-founded Medentum Innovations, where we continue to work toward making high-quality healthcare more accessible to rural Americans through medical devices & AI.

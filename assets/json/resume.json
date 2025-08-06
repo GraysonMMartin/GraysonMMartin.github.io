@@ -163,8 +163,7 @@
       "keywords": [
         "MPI",
         "OpenMP",
-        "Distributed Training/Inference",
-        "Nvidia CUDA"
+        "Distributed Training/Inference"
       ]
     },
     {
