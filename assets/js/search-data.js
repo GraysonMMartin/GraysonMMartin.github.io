@@ -23,7 +23,10 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/cv/";
           },
-        },{id: "projects-madbus",
+        },{id: "news-i-am-now-a-ml-research-engineering-fellow-at-the-kempner-institute",
+          title: 'I am now a ML Research Engineering Fellow at The Kempner Institute.',
+          description: "",
+          section: "News",},{id: "projects-madbus",
           title: 'MADBUS',
           description: "Work completed as part of the Robotics and Automation Summer School at Los Alamos National Laboratory. Worked on and written with Olyvia Hanken-Arlen, Anunth Ramaswami, Jessica Mendez, Colin Sanders, Matthew Hammond, and Dr. Beth Boadman. Supported by Los Alamos National Laboratory and approved for release under LA-UR-24-33374.",
           section: "Projects",handler: () => {
