@@ -32,13 +32,12 @@
     {
       "name": "The Kempner Institute at Harvard University",
       "location": "Boston, MA",
-      "position": "ML Research Engineering Intern",
-      "url": "https://kempnerinstitute.harvard.edu/kempner-institute-undergraduate-summer-internship-program-in-ml-research-engineering/",
+      "position": "ML Research Engineering Fellow",
+      "url": "https://kempnerinstitute.harvard.edu/people/our-people/grayson-martin/",
       "startDate": "2025-06-18",
-      "endDate": "2025-08-22",
       "summary": "R&D in support of a NeuroAI project focused on created a modular, functional model of the mouse brain with PyTorch",
       "highlights": ["Generated several new Gymnasium environments, running training scripts to compare models in different environments and keeping track of performance with Weights & Biases integration",
-                     "Added the vision module of the brain, considering tradeoffs between complexity and generalizability"]
+                     "Added the vision module of the brain, considering tradeoffs between complexity, generalizability, and biological plausibility"]
     },
     {
       "name": "Medentum Innovations, Inc.",
@@ -50,6 +49,14 @@
       "highlights": ["Co-inventor of a patented device, gaining experience computer-aided drafting, coding, and prototyping",
                      "Served as a liason to a PI for an NIH-backed data sceince project, interviewed potential employees, and actively review and edit grant proposals",
                      "Support staff data scientists in COPD flare-up prediction, classification of ENT disorders, and multimodal generalist biomedical AI through literature review, exploratory data analysis, and TensorFlow model implementations"]
+    },
+    {
+      "name": "Harvard University",
+      "location": "Boston, MA",
+      "position": "Teaching Fellow",
+      "startDate": "2026-01-26",
+      "summary": "Teaching Fellow for the course CS 2050: High Performance Computing for Science and Engineering",
+      "highlights": ["Holding office hours and grading assignments related to parallel computing (OpenMP), distributed computing (MPI), and GPU computing (CUDA)"]
     },
     {
       "name": "Los Alamos National Laboratory",

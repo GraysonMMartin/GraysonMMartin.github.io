@@ -6,7 +6,7 @@ subtitle: <a href='https://kempnerinstitute.harvard.edu/'>The Kempner Institute 
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: kempner_headshot_cropped.jpg
   image_circular: false # crops the image to make it circular
   more_info: >
     <p>graysonmartin04@gmail.com</p>
