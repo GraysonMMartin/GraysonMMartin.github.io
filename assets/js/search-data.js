@@ -46,6 +46,11 @@ ninja.data = [{
           description: "Written with Elyse Goncalves and Matan Josephy with additional work by Alma T. Barak, Ben Ali H. Brown, Angela S. Chen, Darcy G Lin Elise A. Spenner, Dennis S. Eum, and Neil H. Shah",
           section: "Projects",handler: () => {
               window.location.href = "/projects/feeder_schools/";
+            },},{id: "projects-mbta-speedrun-pvp-productions",
+          title: 'MBTA Speedrun, PVP Productions',
+          description: "Written with Pranay Varada. Primary article work by Pranay Varada, ideas and optimization work with Aryan Naveen, and photography by Rohan Rajeev.",
+          section: "Projects",handler: () => {
+              window.location.href = "/projects/mbta_speedrun/";
             },},{
         id: 'social-email',
         title: 'email',
