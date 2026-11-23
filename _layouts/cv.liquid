@@ -86,42 +86,16 @@ layout: default
             {% endunless %}
           {% endif %}
           {% if data[0] == 'meta' or data[1].size == 0 %} {% continue %} {% endif %}
+          {% assign section_key = data[0] %}
+          {% assign cv_section = site.cv_sections[section_key] %}
+          {% assign section_title = data[0] | capitalize %}
+          {% if cv_section.title %}{% assign section_title = cv_section.title %}{% endif %}
+          {% assign section_template = cv_section.template | default: section_key %}
           <a class="anchor" id="{{ data[0] }}"></a>
           <div class="card mt-3 p-3">
-            <h3 class="card-title font-weight-medium">{{ data[0] | capitalize }}</h3>
+            <h3 class="card-title font-weight-medium">{{ section_title }}</h3>
             <div>
-              {% case data[0] %}
-                {% when 'basics' %}
-                  {% include resume/basics.liquid %}
-                {% when 'education' %}
-                  {% include resume/education.liquid %}
-                {% when 'work' %}
-                  {% include resume/work.liquid %}
-                {% when 'leadership' %}
-                  {% include resume/leadership.liquid %}
-                {% when 'volunteer' %}
-                  {% include resume/volunteer.liquid %}
-                {% when 'projects' %}
-                  {% include resume/projects.liquid %}
-                {% when 'awards' %}
-                  {% include resume/awards.liquid %}
-                {% when 'skills' %}
-                  {% include resume/skills.liquid %}
-                {% when 'publications' %}
-                  {% include resume/publications.liquid %}
-                {% when 'patents' %}
-                  {% include resume/patents.liquid %}
-                {% when 'languages' %}
-                  {% include resume/languages.liquid %}
-                {% when 'interests' %}
-                  {% include resume/interests.liquid %}
-                {% when 'certificates' %}
-                  {% include resume/certificates.liquid %}
-                {% when 'references' %}
-                  {% include resume/references.liquid %}
-                {% else %}
-
-              {% endcase %}
+              {% include resume/{{ section_template }}.liquid %}
             </div>
           </div>
         {% endfor %}

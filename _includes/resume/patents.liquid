@@ -1,5 +1,5 @@
 <ul class="card-text font-weight-light list-group list-group-flush">
-  {% assign patents = data[1] | sort: 'releaseDate' | reverse %}
+  {% assign patents = data[1] %}
   {% for content in patents %}
     <li class="list-group-item">
       <div class="row">
@@ -17,9 +17,16 @@
         </div>
         <div class="col-xs-10 cl-sm-10 col-md-10 mt-2 mt-md-0">
           <h6 class="title font-weight-bold ml-1 ml-md-4">
-            <a href="{{ content.url }}">{{ content.name }}</a>
+            {% if content.url %}<a href="{{ content.url | relative_url }}">{{ content.name }}</a>{% else %}{{ content.name }}{% endif %}
           </h6>
-          <h6 class="ml-1 ml-md-4" style="font-size: 0.95rem; font-style: italic">{{ content.summary }}</h6>
+          {% if content.authors %}
+            <h6 class="ml-1 ml-md-4" style="font-size: 0.95rem">
+              {{ content.authors | replace: 'Grayson M. Martin', '<b>Grayson M. Martin</b>' | replace: 'Grayson Martin', '<b>Grayson Martin</b>' }}
+            </h6>
+          {% endif %}
+          {% if content.summary %}
+            <h6 class="ml-1 ml-md-4 font-weight-bold" style="font-size: 0.95rem">{{ content.summary }}</h6>
+          {% endif %}
         </div>
       </div>
     </li>

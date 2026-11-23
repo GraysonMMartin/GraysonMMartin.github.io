@@ -15,7 +15,7 @@ footer_text: >
   Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
 keywords: # add your own keywords or leave empty
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
-icon: ⚛️ # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
+icon: 🤖 # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 
 url: https://GraysonMMartin.github.io # the base hostname & protocol for your site
 baseurl: # the subpath of your site, e.g. /blog/. Leave blank for root
@@ -195,7 +195,7 @@ exclude:
   - _pages/bibliography.md
   - _pages/dropdown.md
   - _pages/profiles.md
-  - _pages/publications.md
+ # - _pages/publications.md
   - _pages/repositories.md
 
 keep_files:
@@ -270,8 +270,8 @@ display_categories: ["external-services"] # these categories will be displayed o
 # -----------------------------------------------------------------------------
 
 scholar:
-  last_name: [Einstein]
-  first_name: [Albert, A.]
+  last_name: [Martin]
+  first_name: [Grayson, Grayson M., G., G. M.]
 
   style: apa
   locale: en
@@ -317,6 +317,7 @@ filtered_bibtex_keywords:
     blog,
     code,
     google_scholar_id,
+    highlight,
     html,
     inspirehep_id,
     pdf,
@@ -330,7 +331,7 @@ filtered_bibtex_keywords:
   ]
 
 # Maximum number of authors to be shown for each publication (more authors are visible on click)
-max_author_limit: 3 # leave blank to always show all authors
+max_author_limit: # leave blank to always show all authors
 more_authors_animation_delay: 10 # more authors are revealed on click using animation; smaller delay means faster animation
 
 # Enables publication thumbnails. If disabled, none of the publications will display thumbnails, even if specified in the bib entry.
@@ -637,16 +638,24 @@ jekyll_get_json:
 
 jsonresume:
   - basics
-  - work
-  - leadership
   - education
-  - publications
-  - patents
-  - projects
-  - volunteer
-  - awards
-  - certificates
-  - skills
-  - languages
   - interests
-  - references
+  - research
+  - publications
+  - teaching
+  - other_experience
+  - other_publications
+  - projects
+  - patents
+  - skills
+
+# Display titles and templates (_includes/resume/<template>.liquid) for CV sections.
+# Sections not listed here use the capitalized key as title and the key as template.
+cv_sections:
+  interests: { title: Research Interests }
+  research: { title: Research Experience, template: work }
+  teaching: { title: Teaching Experience, template: work }
+  other_experience: { title: Other Experience, template: work }
+  other_publications: { title: Other Publications, template: publications }
+  projects: { title: Selected Projects }
+  skills: { title: Technical Skills }

@@ -26,6 +26,6 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a recent graduate of Harvard University where I studied computer science and applied mathematics. My interests broadly lie in perception & decision-making, especially when applied to robotics and natural agents.
+I am a ML Research Engineering Fellow at The Kempner Institute where I work on a project building biologically-constrained computational models of the mouse brain. My current work includes reinforcement learning and intrinsic curiosity. I also co-founded Medentum Innovations, where we continue to work toward making high-quality healthcare more accessible to rural Americans through medical devices & AI. I graduated from Harvard in 2025 with a degree in computer science and a minor in mathematical sciences. Previously, I was a robotics and automation rapid prototyping intern at Los Alamos National Laboratory.
 
-My background spans data science, optimization, reinforcement learning, geometric machine learning, signals and communications, control theory, computer vision, and high-performance computing. My work includes robotics rapid prototyping at Los Alamos National Laboratory and NeuroAI research at The Kempner Institute. I also co-founded Medentum Innovations, where we continue to work toward making high-quality healthcare more accessible to rural Americans through medical devices & AI.
+I plan to pursue a PhD in embodied intelligence and robot learning, with particular interests in spatial intelligence and representation learning, world models and long-horizon planning, and memory and lifelong learning.
